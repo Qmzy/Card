@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="11762" systemVersion="15G1212" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="id2-Ru-Orq">
+    <device id="retina4_7" orientation="portrait">
+        <adaptation id="fullscreen"/>
+    </device>
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="11757"/>
+        <capability name="Constraints with non-1.0 multipliers" minToolsVersion="5.1"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <scenes>
+        <!--View Controller-->
+        <scene sceneID="lw4-2i-hc5">
+            <objects>
+                <viewController automaticallyAdjustsScrollViewInsets="NO" hidesBottomBarWhenPushed="YES" id="id2-Ru-Orq" customClass="ViewController" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="wnM-pA-R7f"/>
+                        <viewControllerLayoutGuide type="bottom" id="zlV-Mn-CB6"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="0is-7o-QNg">
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="bg" translatesAutoresizingMaskIntoConstraints="NO" id="G0j-FF-OeY">
+                                <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                            </imageView>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="XO0-Eg-pb1" customClass="CardView">
+                                <rect key="frame" x="15" y="58.5" width="345" height="530"/>
+                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="530" id="dcO-4S-Rjc"/>
+                                </constraints>
+                            </view>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="oja-s9-myD">
+                                <rect key="frame" x="25" y="588.5" width="92" height="35"/>
+                                <color key="backgroundColor" red="0.45882352939999999" green="0.67450980390000004" blue="0.2784313725" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="35" id="Ll5-3j-Ydl"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                <state key="normal" title="重新加载">
+                                    <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                </state>
+                                <userDefinedRuntimeAttributes>
+                                    <userDefinedRuntimeAttribute type="number" keyPath="self.layer.cornerRadius">
+                                        <integer key="value" value="4"/>
+                                    </userDefinedRuntimeAttribute>
+                                    <userDefinedRuntimeAttribute type="boolean" keyPath="self.layer.maskToBounds" value="YES"/>
+                                </userDefinedRuntimeAttributes>
+                                <connections>
+                                    <action selector="reset:" destination="id2-Ru-Orq" eventType="touchUpInside" id="PRe-5n-50d"/>
+                                </connections>
+                            </button>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="6JK-2r-sSK">
+                                <rect key="frame" x="132" y="588.5" width="102" height="35"/>
+                                <color key="backgroundColor" red="0.45882352939999999" green="0.67450980390000004" blue="0.2784313725" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                <rect key="contentStretch" x="0.050000000000000003" y="0.0" width="1" height="1"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                <state key="normal" title="单复用">
+                                    <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                </state>
+                                <state key="selected" title="多复用">
+                                    <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                </state>
+                                <userDefinedRuntimeAttributes>
+                                    <userDefinedRuntimeAttribute type="number" keyPath="self.layer.cornerRadius">
+                                        <integer key="value" value="4"/>
+                                    </userDefinedRuntimeAttribute>
+                                    <userDefinedRuntimeAttribute type="boolean" keyPath="self.layer.maskToBounds" value="YES"/>
+                                </userDefinedRuntimeAttributes>
+                                <connections>
+                                    <action selector="changeItemTypes:" destination="id2-Ru-Orq" eventType="touchUpInside" id="dHL-5E-vAm"/>
+                                </connections>
+                            </button>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="wOM-gF-bAQ">
+                                <rect key="frame" x="249" y="588.5" width="101" height="35"/>
+                                <color key="backgroundColor" red="0.45882352939999999" green="0.67450980390000004" blue="0.2784313725" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                <state key="normal" title="移除模式">
+                                    <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                </state>
+                                <state key="selected" title="删除模式">
+                                    <color key="titleColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                </state>
+                                <userDefinedRuntimeAttributes>
+                                    <userDefinedRuntimeAttribute type="number" keyPath="self.layer.cornerRadius">
+                                        <integer key="value" value="4"/>
+                                    </userDefinedRuntimeAttribute>
+                                    <userDefinedRuntimeAttribute type="boolean" keyPath="self.layer.maskToBounds" value="YES"/>
+                                </userDefinedRuntimeAttributes>
+                                <connections>
+                                    <action selector="changeCarViewMode:" destination="id2-Ru-Orq" eventType="touchUpInside" id="54g-2o-l4B"/>
+                                </connections>
+                            </button>
+                        </subviews>
+                        <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                        <constraints>
+                            <constraint firstItem="G0j-FF-OeY" firstAttribute="leading" secondItem="0is-7o-QNg" secondAttribute="leading" id="0Du-Ms-gX9"/>
+                            <constraint firstItem="XO0-Eg-pb1" firstAttribute="width" secondItem="0is-7o-QNg" secondAttribute="width" multiplier="0.92" id="5Lb-97-Pea"/>
+                            <constraint firstItem="XO0-Eg-pb1" firstAttribute="centerY" secondItem="0is-7o-QNg" secondAttribute="centerY" constant="-10" id="7kO-xR-fqc"/>
+                            <constraint firstItem="6JK-2r-sSK" firstAttribute="height" secondItem="oja-s9-myD" secondAttribute="height" id="8KA-Qp-XZk"/>
+                            <constraint firstItem="XO0-Eg-pb1" firstAttribute="centerX" secondItem="0is-7o-QNg" secondAttribute="centerX" id="BsM-ZZ-oFu"/>
+                            <constraint firstItem="6JK-2r-sSK" firstAttribute="width" secondItem="oja-s9-myD" secondAttribute="width" multiplier="1.1" id="DGb-IB-mlc"/>
+                            <constraint firstItem="G0j-FF-OeY" firstAttribute="top" secondItem="0is-7o-QNg" secondAttribute="top" id="FBU-I1-Cod"/>
+                            <constraint firstItem="wOM-gF-bAQ" firstAttribute="height" secondItem="oja-s9-myD" secondAttribute="height" id="FTf-RD-LY4"/>
+                            <constraint firstItem="wOM-gF-bAQ" firstAttribute="centerY" secondItem="oja-s9-myD" secondAttribute="centerY" id="G17-1E-raO"/>
+                            <constraint firstItem="wOM-gF-bAQ" firstAttribute="leading" secondItem="6JK-2r-sSK" secondAttribute="trailing" constant="15" id="PH0-b4-dDi"/>
+                            <constraint firstAttribute="trailing" secondItem="wOM-gF-bAQ" secondAttribute="trailing" constant="25" id="Pqk-4O-EKg"/>
+                            <constraint firstItem="oja-s9-myD" firstAttribute="top" secondItem="XO0-Eg-pb1" secondAttribute="bottom" id="TWu-9a-lpe"/>
+                            <constraint firstItem="6JK-2r-sSK" firstAttribute="centerY" secondItem="oja-s9-myD" secondAttribute="centerY" id="VYY-eC-N9E"/>
+                            <constraint firstItem="oja-s9-myD" firstAttribute="leading" secondItem="0is-7o-QNg" secondAttribute="leading" constant="25" id="dr9-QA-RgB"/>
+                            <constraint firstItem="wOM-gF-bAQ" firstAttribute="width" secondItem="oja-s9-myD" secondAttribute="width" multiplier="1.1" id="g8J-eG-P5b"/>
+                            <constraint firstItem="zlV-Mn-CB6" firstAttribute="top" secondItem="G0j-FF-OeY" secondAttribute="bottom" id="qUn-G1-6k2"/>
+                            <constraint firstAttribute="trailing" secondItem="G0j-FF-OeY" secondAttribute="trailing" id="r4Y-0r-sq7"/>
+                            <constraint firstItem="6JK-2r-sSK" firstAttribute="leading" secondItem="oja-s9-myD" secondAttribute="trailing" constant="15" id="sL1-Im-kQU"/>
+                        </constraints>
+                    </view>
+                    <connections>
+                        <outlet property="cardView" destination="XO0-Eg-pb1" id="7BN-8w-YUh"/>
+                        <outlet property="cardViewHeightConstraint" destination="dcO-4S-Rjc" id="l4W-X9-Wyj"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="C2Z-at-Tu3" sceneMemberID="firstResponder"/>
+            </objects>
+        </scene>
+    </scenes>
+    <resources>
+        <image name="bg" width="750" height="1334"/>
+    </resources>
+</document>
