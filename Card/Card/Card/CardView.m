@@ -19,11 +19,11 @@
     CardViewItem * __curItem;   // 当前页
     CardViewItem * __lastItem;  // 上一页
     
-    CGFloat __curAngle;       // 当前项的旋转角度
-    CGFloat __fingerPoiX;     // 手指在 X 轴方向上滑过的距离，用于判断方向：小于 0 左滑，大于0 右滑
-    NSInteger __visibleIndex; // 当前最上层可视项的索引值
+    CGFloat __curAngle;         // 当前项的旋转角度
+    CGFloat __fingerPoiX;       // 手指在 X 轴方向上滑过的距离，用于判断方向：小于 0 左滑，大于0 右滑
+    NSInteger __visibleIndex;   // 当前最上层可视项的索引值
     
-    NSInteger __otherSubViewNum; // self 上非 item 子视图的个数
+    NSInteger __otherSubViewNum; // cardView 上非 item 子视图的个数
 }
 @property (nonatomic, strong) UILabel * pageControl; // 页码指示器
 @property (nonatomic, strong) NSMutableDictionary * mapDict; // 映射字典。key：复用标示符，value：xib或者类名
@@ -52,6 +52,7 @@
     [self repeatedlyInitialization];
 }
 
+/// 只初始化一次的变量
 - (void)onlyOnceInitialization
 {
     self.maxItems = 0;
@@ -64,6 +65,7 @@
     self.mapDict = [NSMutableDictionary dictionary];
 }
 
+/// 重复初始化的变量。reloadData 时调用
 - (void)repeatedlyInitialization
 {
     __visibleIndex = 0;
@@ -88,8 +90,8 @@
         // 视图添加顺序与实际观测顺序相反，即先添加的在最下面
         [self addSubview:item];
         // 必须先添加再设置约束
-        [self setOriginalFrameForItem:item atIndex:i isUpdate:NO];
-        [self setTransformForItem:item atIndex:i];
+        [item setOriginalFrameForItem:i isUpdate:NO];
+        [item setTransformForItem:i];
         
         if (i == 0) {
             [item removeAlphaMaskView];
@@ -111,89 +113,6 @@
     [self addPanGestureRecognizer];
 }
 
-/**
-  *  @brief   设置卡片项的初始位置约束
-  *  @attention   item 缩放时其子视图也缩小；还原时，如果 item 与父视图没有约束，则 item 的子视图不会还原且在滑动时界面出错
-  */
-- (void)setOriginalFrameForItem:(CardViewItem *)item atIndex:(NSInteger)idx isUpdate:(BOOL)isUpdate
-{
-    SELF_WEAK;
-    if (isUpdate) {
-        
-        // 约束不会导致 frame 调整
-        item.center = CGPointMake(W(self)/2, H(item)/2);
-        item.transform = CGAffineTransformMakeRotation(0);
-
-        [item mas_updateConstraints:^(MASConstraintMaker * make) {
-            SELF_STRONG;
-            make.centerX.equalTo(strongSelf);
-            make.centerY.equalTo(@((H(item) - H(strongSelf))/2 ));
-        }];
-    }
-    else {
-        CGRect rect = [self itemRectAtIndex:idx];
-        item.center = CGPointMake(W(self) / 2, rect.size.height / 2);
-
-        [item mas_makeConstraints:^(MASConstraintMaker * make) {
-            SELF_STRONG;
-            make.centerX.equalTo(strongSelf);
-            make.centerY.equalTo(@((rect.size.height - H(strongSelf)) /2 ));
-            make.width.equalTo(@(rect.size.width));
-            make.height.equalTo(@(rect.size.height));
-        }];
-    }
-}
-
-/**
-  *  @brief   设置卡片项的最终位置约束
-  *  @param   idx   索引，用于新添加 item 还未设置 frame 时添加约束
-  *  @param   isUpdate   是否是更新约束
-  *  @param   isLeft   yes - 最终位置在左侧    no - 最终位置在右侧
-  */
-- (void)setFinalFrameForItem:(CardViewItem *)item atIndex:(NSInteger)idx isUpdate:(BOOL)isUpdate isLeftFinal:(BOOL)isLeft
-{
-    // cx 代表 item.center.x； centerX 代表 item 与 self 中心点的距离
-    NSInteger cx = -300;
-    NSInteger centerX = cx - self.center.x;
-    
-    // 如图：|← 300 →□← 300 →|（ | 代表 item.center.x 位置， 300 代表距离，□ 代表self 视图）
-    if (!isLeft) {
-        cx = -cx + W(self);    centerX = -centerX;
-    }
-    
-    if (isUpdate) {
-    
-        // 设置旋转角度
-        [self adjustTranslateAngle:item centerX:cx];
-        item.center = CGPointMake(cx, H(self)/2 + 100);
-    
-        [item mas_updateConstraints:^(MASConstraintMaker * make) {
-            make.centerX.equalTo(@(centerX));
-            make.centerY.equalTo(@(100));
-        }];
-    }
-    else {
-        CGRect rect = [self itemRectAtIndex:idx];
-        item.center = CGPointMake(cx, H(self)/2 + 100);
-
-        [item mas_makeConstraints:^(MASConstraintMaker * make) {
-            make.centerX.equalTo(@(centerX));
-            make.centerY.equalTo(@(100));
-            make.width.equalTo(@(rect.size.width));
-            make.height.equalTo(@(rect.size.height));
-        }];
-    }
-}
-
-/**
-  *  @brief   设置卡片项的放射变换
-  */
-- (void)setTransformForItem:(CardViewItem *)item atIndex:(NSInteger)idx
-{
-    CGAffineTransform scale = CGAffineTransformMakeScale(1 - self.scaleRatio * idx, 1);
-    item.transform = CGAffineTransformTranslate(scale, 0, 15 * idx);
-}
-
 - (void)addPanGestureRecognizer
 {
     if (!__pan) {
@@ -206,8 +125,10 @@
 }
 
 
-#pragma mark - PageControl 页码指示器
-
+#pragma mark - PageControl
+/**
+  *  @brief   创建页码指示器，并设置约束
+  */
 - (void)createPageControl
 {
     _pageControl = [[UILabel alloc] init];
@@ -221,7 +142,7 @@
     [_pageControl mas_makeConstraints:^(MASConstraintMaker * make) {
         make.leading.equalTo(@0);
         make.trailing.equalTo(@0);
-        make.bottom.equalTo(@(-20));
+        make.bottom.equalTo(@(-35));
         make.height.equalTo(@20);
     }];
 }
@@ -250,24 +171,19 @@
 
 #pragma mark - SET
 
-- (void)setMaxItems:(NSInteger)maxItems
+- (void)setCurAngle:(CGFloat)curAngle
 {
-    if (maxItems <= 0 || maxItems > [self numberOfItems]){
-        _maxItems = [self numberOfItems];
-    }
-    _maxItems = maxItems;
+    __curAngle = curAngle;
 }
 
+/**
+  *  @brief   如果需要页码指示器，那么 cardView 上除 item 外的子视图等于 1，否则为 0
+  */
 - (void)setIsNeedControl:(BOOL)isNeedControl
 {
     _isNeedControl = isNeedControl;
     
-    if (isNeedControl) {
-        __otherSubViewNum = 1;
-    }
-    else {
-        __otherSubViewNum = 0;
-    }
+    __otherSubViewNum = isNeedControl ? 1 : 0;
 }
 
 - (void)setMode:(CardViewItemScrollMode)mode
@@ -277,6 +193,16 @@
 
 
 #pragma mark - GET
+/**
+  *  @brief   判断 maxItems 的有效性，获取时需与当前项数进行比较。
+  */
+- (NSInteger)maxItems
+{
+    if (_maxItems <= 0 || _maxItems > [self numberOfItems]) {
+        return [self numberOfItems];
+    }
+    return _maxItems;
+}
 
 - (NSInteger)numberOfItems
 {
@@ -289,6 +215,7 @@
 
 - (NSInteger)indexOfVisibleItem
 {
+    // 超出 [ 0     self.numberOfItems - 1 ]  范围的值进行调整
     if (__visibleIndex < 0) {
         __visibleIndex = 0;
     }
@@ -297,6 +224,11 @@
         __visibleIndex = [self numberOfItems] - 1;
     }
     return __visibleIndex;
+}
+
+- (CGFloat)curAngle
+{
+    return __curAngle;
 }
 
 
@@ -322,20 +254,23 @@
 }
 
 /**
-  *  @brief   指定索引项
+  *  @brief   获取指定索引项
   */
 - (CardViewItem *)itemAtIndex:(NSInteger)index
 {
+    CardViewItem * item = nil;
+    
     if ([self.dataSource respondsToSelector:@selector(cardView:itemAtIndex:)]) {
         
-        CardViewItem * item = [self.dataSource cardView:self itemAtIndex:index];
-        
-        if (item == nil) {
-            return [CardViewItem new];
-        }
-        return item;
+        item = [self.dataSource cardView:self itemAtIndex:index];
     }
-    return [CardViewItem new];
+    
+    if (item == nil) {
+        item = [CardViewItem new];
+    }
+    item.cardView = self;
+    
+    return item;
 }
 
 - (void)registerXibFile:(NSString *)xibFile forItemReuseIdentifier:(NSString *)identifier
@@ -434,16 +369,6 @@
 }
 
 /**
-  *  @brief   计算、调整指定项的旋转角度
-  *  @param   centerX    item 的中心点 x 值
-  */
-- (void)adjustTranslateAngle:(CardViewItem *)item centerX:(CGFloat)centerX
-{
-    __curAngle = (centerX - W(item)/2.0) / W(item) / 4.0;
-    item.transform = CGAffineTransformMakeRotation(__curAngle);
-}
-
-/**
   *  @brief   从 xib 文件获取视图对象
   */
 - (UIView *)viewFromXibFile:(NSString *)xibFile
@@ -496,8 +421,8 @@
             // 先添加上并设置初始位置
             [__lastItem removeAlphaMaskView];
             [self addSubview:__lastItem];
-            [self setFinalFrameForItem:__lastItem atIndex:-1 isUpdate:NO isLeftFinal:YES];
-            [self setTransformForItem:__lastItem atIndex:0];
+            [__lastItem setFinalFrameForItem:-1 isUpdate:NO isLeftFinal:YES];
+            [__lastItem setTransformForItem:0];
         }
     }
     else if (gesture.state == UIGestureRecognizerStateChanged) {
@@ -516,13 +441,13 @@
         if (__fingerPoiX < 0 && __visibleIndex < [self numberOfItems] - 1) {
             
             [self calculateItemCenter:__curItem point:movedPoint isDeleteMode:NO];
-            [self adjustTranslateAngle:__curItem centerX:__curItem.center.x];
+            [__curItem adjustTranslateAngle:__curItem.center.x];
         }
         // 右滑且未至顶端
         else if (__fingerPoiX > 0 && __visibleIndex > 0 && __lastItem) {
             
             [self calculateItemCenter:__lastItem point:movedPoint isDeleteMode:NO];
-            [self adjustTranslateAngle:__lastItem centerX:__lastItem.center.x];
+            [__lastItem adjustTranslateAngle:__lastItem.center.x];
         }
         
         [gesture setTranslation:CGPointZero inView:self];
@@ -582,7 +507,7 @@
         __fingerPoiX += movedPoint.x;
 
         [self calculateItemCenter:__curItem point:movedPoint isDeleteMode:YES];
-        [self adjustTranslateAngle:__curItem centerX:__curItem.center.x];
+        [__curItem adjustTranslateAngle:__curItem.center.x];
 
         [gesture setTranslation:CGPointZero inView:self];
     }
@@ -634,15 +559,15 @@
         // 放置最底下
         [self sendSubviewToBack:newItem];
         // 设置初始位置
-        [self setOriginalFrameForItem:newItem atIndex:index isUpdate:NO];
-        [self setTransformForItem:newItem atIndex:self.maxItems - 1];
+        [newItem setOriginalFrameForItem:index isUpdate:NO];
+        [newItem setTransformForItem:self.maxItems - 1];
         
         [self.visiableItems addObject:newItem];
     }
     
     [UIView animateWithDuration:animationDuration animations:^{
         
-        [self setFinalFrameForItem:item atIndex:-1 isUpdate:YES isLeftFinal:isLeft];
+        [item setFinalFrameForItem:-1 isUpdate:YES isLeftFinal:isLeft];
         
         // 左滑删除，则需要剩余页缩放；右滑弹回则不处理
         if (isCur) {
@@ -660,7 +585,7 @@
                 
                 if (i < self.subviews.count - 1 - __otherSubViewNum || __visibleIndex + self.maxItems >= [self numberOfItems]) {
                     
-                    [self setTransformForItem:nextItem atIndex:i - 1];
+                    [nextItem setTransformForItem:i - 1];
                     
                     if (i == 1) {
                         [nextItem removeAlphaMaskView];
@@ -710,7 +635,7 @@
 
     [UIView animateWithDuration:animationDuration animations:^{
 
-        [self setOriginalFrameForItem:item atIndex:-1 isUpdate:YES];
+        [item setOriginalFrameForItem:-1 isUpdate:YES];
         
         // 如果是上一页覆盖上来，则需要剩余页缩放；如果是当前页还原则不处理
         if (isLast) {
@@ -730,7 +655,7 @@
                     hiddenItem = nextItem;
                 }
                 else {
-                    [self setTransformForItem:nextItem atIndex:i + 1];
+                    [nextItem setTransformForItem:i + 1];
                 }
             }
             

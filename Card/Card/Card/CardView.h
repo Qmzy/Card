@@ -66,6 +66,7 @@ ItemEdges CardViewItemEdgesMake(CGFloat top, CGFloat left, CGFloat bottom, CGFlo
 @property (nonatomic, strong) NSMutableArray * reusableItems; // 复用项数组。满足多个复用标示符
 @property (nonatomic, assign) NSInteger maxItems;  // 可视范围内的项数。0 - 默认值。不限制    n - 具体数目
 @property (nonatomic, assign) CGFloat scaleRatio;  // 层级缩放比例。默认 0.02
+@property (nonatomic, assign) CGFloat curAngle;    // 当前项的旋转角度
 @property (nonatomic, assign) BOOL isNeedControl;  // 是否需要页码指示器。默认 YES
 @property (nonatomic, assign) ItemEdges itemEdge;  // 用于项的约束。优先于 frame 使用（暂未实现）
 @property (nonatomic, assign) CardViewItemScrollMode mode;  // 滚动模式。默认 remove
@@ -78,6 +79,10 @@ ItemEdges CardViewItemEdgesMake(CGFloat top, CGFloat left, CGFloat bottom, CGFlo
   *  @brief   返回指定索引下的项
   */
 - (CardViewItem *)itemAtIndex:(NSInteger)index;
+/**
+  *  @brief   指定索引项的区域大小
+  */
+- (CGRect)itemRectAtIndex:(NSInteger)index;
 /**
   *  @brief   获取复用对象
   */
