@@ -11,8 +11,8 @@ Pod::Spec.new do |s|
   s.source       = { :git => 'https://github.com/Qmzy/Card.git', :tag => s.version.to_s }
   
   s.requires_arc = true
-  s.source_files = 'Card/**/*.{h,m}'
-  s.public_header_files = 'Card/**/*.{h}'
+  s.source_files = 'Card/Card/**/*.{h,m}'
+  s.public_header_files = 'Card/Card/**/*.{h}'
   
   s.frameworks = 'UIKit', 'Foundation'
 
